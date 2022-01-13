@@ -27,8 +27,8 @@ import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
 import { MeshoptDecoder } from "three/examples/jsm/libs/meshopt_decoder.module.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
-import Thanh from "../public/Thanh.glb";
-import Tham from "../public/Tham.glb";
+// import Thanh from "../assets/model/Thanh.glb";
+import Thanh from "../assets/model/Tham.glb";
 
 import { GUI } from "dat.gui";
 
