@@ -1,6 +1,5 @@
 import { WEBGL } from "three/examples/jsm/WebGL.js";
 import { Viewer } from "./viewer.js";
-import { SimpleDropzone } from "./simple-dropzone";
 import queryString from "query-string";
 
 if (!(window.File && window.FileReader && window.FileList && window.Blob)) {
@@ -14,8 +13,9 @@ class App {
    * @param  {Element} el
    * @param  {Location} location
    */
-  constructor(el, location) {
+  constructor(documentBody, location) {
     const hash = location.hash ? queryString.parse(location.hash) : {};
+    console.log("hash", hash);
     this.options = {
       kiosk: Boolean(hash.kiosk),
       model: hash.model || "",
@@ -25,36 +25,20 @@ class App {
         : null,
     };
 
-    this.el = el;
+    this.el = documentBody;
     this.viewer = null;
     this.viewerEl = null;
-    this.dropEl = el.querySelector(".dropzone");
-    this.inputEl = el.querySelector("#file-input");
-
-    this.createDropzone();
+    this.dropEl = documentBody.querySelector(".dropzone");
+    this.inputEl = documentBody.querySelector("#file-input");
 
     const options = this.options;
 
-    if (options.kiosk) {
-      const headerEl = document.querySelector("header");
-      headerEl.style.display = "none";
-    }
-
-    // if (options.model) {
-    //   this.view();
+    // if (options.kiosk) {
+    //   const headerEl = document.querySelector("header");
+    //   headerEl.style.display = "none";
     // }
+
     this.view();
-  }
-
-  /**
-   * Sets up the drag-and-drop controller.
-   */
-  createDropzone() {
-    const dropCtrl = new SimpleDropzone(this.dropEl, this.inputEl);
-    dropCtrl.on("drop", ({ files }) => this.load(files));
-
-    
-    // this.load("./Thanh.glb");
   }
 
   /**
@@ -71,39 +55,6 @@ class App {
   }
 
   /**
-   * Loads a fileset provided by user action.
-   * @param  {Map<string, File>} fileMap
-   */
-  load(fileMap) {
-    
-    // rootFile, rootPath, fileMap
-    // console.log("fileMap : ", fileMap);
-    // console.log("sdfdsf", JSON.stringify(fileMap));
-    // let myFileMap = new Map();
-    // let modelFile = new File(["Thanh.glb"], "/Thanh.glb", {
-    //   type: "",
-    // });
-    // myFileMap.set("/Thanh.glb", modelFile);
-    // console.log("myFileMap : ", myFileMap);
-    // let rootFile;
-    // let rootPath;
-    // Array.from(fileMap).forEach(([path, file]) => {
-    //   if (file.name.match(/\.(gltf|glb)$/)) {
-    //     rootFile = file;
-    //     rootPath = path.replace(file.name, "");
-    //   }
-    // });
-
-    // if (!rootFile) {
-    //   this.onError("No .gltf or .glb asset found.");
-    // }
-    // console.log("rootFile", rootFile);
-    // console.log("rootPath", rootPath);
-    // console.log("fileMap", fileMap);
-    this.view();
-  }
-
-  /**
    * Passes a model to the viewer, given file and resources.
    * @param  {File|string} rootFile
    * @param  {string} rootPath
@@ -114,16 +65,11 @@ class App {
 
     const viewer = this.viewer || this.createViewer();
 
-    // const fileURL =
-    //   typeof rootFile === "string" ? rootFile : URL.createObjectURL(rootFile);
-
-    // const cleanup = () => {
-    //   if (typeof rootFile === "object") URL.revokeObjectURL(fileURL);
-    // };
-
     viewer
       .load()
-      .catch((e) => this.onError(e))
+      .catch((e) => {
+        this.onError(e)
+      })
       .then((gltf) => {
         console.log("gltf", gltf);
       });

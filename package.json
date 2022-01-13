@@ -39,7 +39,6 @@
     "gltf-validator": "^2.0.0-dev.3.5",
     "handlebars": "^4.7.6",
     "query-string": "^7.0.1",
-    "simple-dropzone": "^0.8.1",
     "three": "^0.133.1"
   },
   "devDependencies": {
