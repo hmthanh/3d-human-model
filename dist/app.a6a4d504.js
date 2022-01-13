@@ -42150,10 +42150,8 @@ class RGBELoader extends _three.DataTextureLoader {
 }
 
 exports.RGBELoader = RGBELoader;
-},{"three":"node_modules/three/build/three.module.js"}],"public/Thanh.glb":[function(require,module,exports) {
-module.exports = "/Thanh.e203b185.glb";
-},{}],"public/Tham.glb":[function(require,module,exports) {
-module.exports = "/Tham.2cc47bf6.glb";
+},{"three":"node_modules/three/build/three.module.js"}],"assets/model/Thanh.glb":[function(require,module,exports) {
+module.exports = "/Thanh.934744f3.glb";
 },{}],"node_modules/dat.gui/build/dat.gui.module.js":[function(require,module,exports) {
 "use strict";
 
@@ -45110,9 +45108,7 @@ var _OrbitControls = require("three/examples/jsm/controls/OrbitControls.js");
 
 var _RGBELoader = require("three/examples/jsm/loaders/RGBELoader.js");
 
-var _Thanh = _interopRequireDefault(require("../public/Thanh.glb"));
-
-var _Tham = _interopRequireDefault(require("../public/Tham.glb"));
+var _Thanh = _interopRequireDefault(require("../assets/model/Thanh.glb"));
 
 var _dat = require("dat.gui");
 
@@ -45210,6 +45206,7 @@ var Viewer = /*#__PURE__*/function () {
     this.axesHelper = null;
     this.addAxesHelper();
     this.addGUI();
+    this.addLights();
     if (options.kiosk) this.gui.close();
     this.animate = this.animate.bind(this);
     requestAnimationFrame(this.animate);
@@ -45270,6 +45267,8 @@ var Viewer = /*#__PURE__*/function () {
             throw new Error("This model contains no scene, and cannot be viewed here. However," + " it may contain individual 3D resources.");
           }
 
+          console.log("scene", scene);
+
           _this.setContent(scene, clips); // See: https://github.com/google/draco/issues/349
           // DRACOLoader.releaseDecoderModule();
 
@@ -45302,17 +45301,7 @@ var Viewer = /*#__PURE__*/function () {
       this.defaultCamera.updateProjectionMatrix();
       this.defaultCamera.position.x = 0;
       this.defaultCamera.position.y = 0.5;
-      this.defaultCamera.position.z = 2; // if (this.options.cameraPosition) {
-      //   this.defaultCamera.position.fromArray(this.options.cameraPosition);
-      //   this.defaultCamera.lookAt(new Vector3());
-      // } else {
-      //   this.defaultCamera.position.copy(center);
-      //   this.defaultCamera.position.x += size / 2.0;
-      //   this.defaultCamera.position.y += size / 5.0;
-      //   this.defaultCamera.position.z += size / 2.0;
-      //   this.defaultCamera.lookAt(center);
-      // }
-
+      this.defaultCamera.position.z = 2;
       this.setCamera(DEFAULT_CAMERA);
       this.axesCamera.position.copy(this.defaultCamera.position);
       this.axesCamera.lookAt(this.axesScene.position);
@@ -45339,7 +45328,6 @@ var Viewer = /*#__PURE__*/function () {
       this.updateTextureEncoding();
       this.updateDisplay();
       window.content = this.content;
-      console.info("[glTF Viewer] THREE.Scene exported as `window.content`.");
       this.printGraph(this.content);
     }
   }, {
@@ -45709,28 +45697,34 @@ var Viewer = /*#__PURE__*/function () {
         this.cameraCtrl.onChange(function (name) {
           return _this10.setCamera(name);
         });
-      } // if (morphMeshes.length) {
-      //   this.morphFolder.domElement.style.display = "";
-      //   morphMeshes.forEach((mesh) => {
-      //     if (mesh.morphTargetInfluences.length) {
-      //       const nameCtrl = this.morphFolder.add(
-      //         { name: mesh.name || "Untitled" },
-      //         "name"
-      //       );
-      //       this.morphCtrls.push(nameCtrl);
-      //     }
-      //     for (let i = 0; i < mesh.morphTargetInfluences.length; i++) {
-      //       const ctrl = this.morphFolder
-      //         .add(mesh.morphTargetInfluences, i, 0, 1, 0.01)
-      //         .listen();
-      //       Object.keys(mesh.morphTargetDictionary).forEach((key) => {
-      //         if (key && mesh.morphTargetDictionary[key] === i) ctrl.name(key);
-      //       });
-      //       this.morphCtrls.push(ctrl);
-      //     }
-      //   });
-      // }
+      }
 
+      if (morphMeshes.length) {
+        this.morphFolder.domElement.style.display = "";
+        morphMeshes.forEach(function (mesh) {
+          if (mesh.morphTargetInfluences.length) {
+            var nameCtrl = _this10.morphFolder.add({
+              name: mesh.name || "Untitled"
+            }, "name");
+
+            _this10.morphCtrls.push(nameCtrl);
+          }
+
+          var _loop = function _loop(i) {
+            var ctrl = _this10.morphFolder.add(mesh.morphTargetInfluences, i, 0, 1, 0.01).listen();
+
+            Object.keys(mesh.morphTargetDictionary).forEach(function (key) {
+              if (key && mesh.morphTargetDictionary[key] === i) ctrl.name(key);
+            });
+
+            _this10.morphCtrls.push(ctrl);
+          };
+
+          for (var i = 0; i < mesh.morphTargetInfluences.length; i++) {
+            _loop(i);
+          }
+        });
+      }
 
       if (this.clips.length) {
         this.animFolder.domElement.style.display = "";
@@ -45798,7 +45792,7 @@ function isIOS() {
   return ["iPad Simulator", "iPhone Simulator", "iPod Simulator", "iPad", "iPhone", "iPod"].includes(navigator.platform) || // iPad on iOS 13 detection
   navigator.userAgent.includes("Mac") && "ontouchend" in document;
 }
-},{"three":"node_modules/three/build/three.module.js","three/examples/jsm/libs/stats.module.js":"node_modules/three/examples/jsm/libs/stats.module.js","three/examples/jsm/loaders/GLTFLoader.js":"node_modules/three/examples/jsm/loaders/GLTFLoader.js","three/examples/jsm/loaders/KTX2Loader.js":"node_modules/three/examples/jsm/loaders/KTX2Loader.js","three/examples/jsm/loaders/DRACOLoader.js":"node_modules/three/examples/jsm/loaders/DRACOLoader.js","three/examples/jsm/libs/meshopt_decoder.module.js":"node_modules/three/examples/jsm/libs/meshopt_decoder.module.js","three/examples/jsm/controls/OrbitControls.js":"node_modules/three/examples/jsm/controls/OrbitControls.js","three/examples/jsm/loaders/RGBELoader.js":"node_modules/three/examples/jsm/loaders/RGBELoader.js","../public/Thanh.glb":"public/Thanh.glb","../public/Tham.glb":"public/Tham.glb","dat.gui":"node_modules/dat.gui/build/dat.gui.module.js","../assets/environment/index.js":"assets/environment/index.js"}],"node_modules/strict-uri-encode/index.js":[function(require,module,exports) {
+},{"three":"node_modules/three/build/three.module.js","three/examples/jsm/libs/stats.module.js":"node_modules/three/examples/jsm/libs/stats.module.js","three/examples/jsm/loaders/GLTFLoader.js":"node_modules/three/examples/jsm/loaders/GLTFLoader.js","three/examples/jsm/loaders/KTX2Loader.js":"node_modules/three/examples/jsm/loaders/KTX2Loader.js","three/examples/jsm/loaders/DRACOLoader.js":"node_modules/three/examples/jsm/loaders/DRACOLoader.js","three/examples/jsm/libs/meshopt_decoder.module.js":"node_modules/three/examples/jsm/libs/meshopt_decoder.module.js","three/examples/jsm/controls/OrbitControls.js":"node_modules/three/examples/jsm/controls/OrbitControls.js","three/examples/jsm/loaders/RGBELoader.js":"node_modules/three/examples/jsm/loaders/RGBELoader.js","../assets/model/Thanh.glb":"assets/model/Thanh.glb","dat.gui":"node_modules/dat.gui/build/dat.gui.module.js","../assets/environment/index.js":"assets/environment/index.js"}],"node_modules/strict-uri-encode/index.js":[function(require,module,exports) {
 'use strict';
 
 module.exports = str => encodeURIComponent(str).replace(/[!'()*]/g, x => "%".concat(x.charCodeAt(0).toString(16).toUpperCase()));
@@ -46568,7 +46562,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "36653" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "45563" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

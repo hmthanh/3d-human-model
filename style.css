@@ -25,9 +25,8 @@ body {
 }
 
 .dropzone {
-  width: 400px;
-  height: 600px;
-  position: fixed;
+  width: 100%;
+  height: 100%;
   bottom: -55px;
   right: -40px;
   z-index: 9999;
@@ -53,7 +52,6 @@ body {
   height: 100%;
   flex-grow: 1;
   flex-shrink: 1;
-  
 }
 
 
@@ -151,11 +149,10 @@ header h1 + .separator {
 }
 
 .gui-wrap {
+  pointer-events: none;
   position: fixed;
   top: 0;
-  left: 0;
-  bottom: 0;
-  pointer-events: none;
+  right: 0;
 }
 
 .gui-wrap > .main {

@@ -27,8 +27,8 @@ import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
 import { MeshoptDecoder } from "three/examples/jsm/libs/meshopt_decoder.module.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
-// import Thanh from "../assets/model/Thanh.glb";
-import Thanh from "../assets/model/Tham.glb";
+import Thanh from "../assets/model/Thanh.glb";
+// import Thanh from "../assets/model/Tham.glb";
 
 import { GUI } from "dat.gui";
 
@@ -155,11 +155,13 @@ export class Viewer {
 
     this.addAxesHelper();
     this.addGUI();
+    this.addLights();
     if (options.kiosk) this.gui.close();
 
     this.animate = this.animate.bind(this);
     requestAnimationFrame(this.animate);
     window.addEventListener("resize", this.resize.bind(this), false);
+    
   }
 
   animate(time) {
@@ -224,7 +226,7 @@ export class Viewer {
                 " it may contain individual 3D resources."
             );
           }
-
+          console.log("scene", scene);
           this.setContent(scene, clips);
 
           // See: https://github.com/google/draco/issues/349
@@ -263,17 +265,6 @@ export class Viewer {
     this.defaultCamera.position.y = 0.5;
     this.defaultCamera.position.z = 2;
 
-    // if (this.options.cameraPosition) {
-    //   this.defaultCamera.position.fromArray(this.options.cameraPosition);
-    //   this.defaultCamera.lookAt(new Vector3());
-    // } else {
-    //   this.defaultCamera.position.copy(center);
-    //   this.defaultCamera.position.x += size / 2.0;
-    //   this.defaultCamera.position.y += size / 5.0;
-    //   this.defaultCamera.position.z += size / 2.0;
-    //   this.defaultCamera.lookAt(center);
-    // }
-
     this.setCamera(DEFAULT_CAMERA);
 
     this.axesCamera.position.copy(this.defaultCamera.position);
@@ -308,7 +299,6 @@ export class Viewer {
     this.updateDisplay();
 
     window.content = this.content;
-    console.info("[glTF Viewer] THREE.Scene exported as `window.content`.");
     this.printGraph(this.content);
   }
 
@@ -661,27 +651,27 @@ export class Viewer {
       this.cameraCtrl.onChange((name) => this.setCamera(name));
     }
 
-    // if (morphMeshes.length) {
-    //   this.morphFolder.domElement.style.display = "";
-    //   morphMeshes.forEach((mesh) => {
-    //     if (mesh.morphTargetInfluences.length) {
-    //       const nameCtrl = this.morphFolder.add(
-    //         { name: mesh.name || "Untitled" },
-    //         "name"
-    //       );
-    //       this.morphCtrls.push(nameCtrl);
-    //     }
-    //     for (let i = 0; i < mesh.morphTargetInfluences.length; i++) {
-    //       const ctrl = this.morphFolder
-    //         .add(mesh.morphTargetInfluences, i, 0, 1, 0.01)
-    //         .listen();
-    //       Object.keys(mesh.morphTargetDictionary).forEach((key) => {
-    //         if (key && mesh.morphTargetDictionary[key] === i) ctrl.name(key);
-    //       });
-    //       this.morphCtrls.push(ctrl);
-    //     }
-    //   });
-    // }
+    if (morphMeshes.length) {
+      this.morphFolder.domElement.style.display = "";
+      morphMeshes.forEach((mesh) => {
+        if (mesh.morphTargetInfluences.length) {
+          const nameCtrl = this.morphFolder.add(
+            { name: mesh.name || "Untitled" },
+            "name"
+          );
+          this.morphCtrls.push(nameCtrl);
+        }
+        for (let i = 0; i < mesh.morphTargetInfluences.length; i++) {
+          const ctrl = this.morphFolder
+            .add(mesh.morphTargetInfluences, i, 0, 1, 0.01)
+            .listen();
+          Object.keys(mesh.morphTargetDictionary).forEach((key) => {
+            if (key && mesh.morphTargetDictionary[key] === i) ctrl.name(key);
+          });
+          this.morphCtrls.push(ctrl);
+        }
+      });
+    }
 
     if (this.clips.length) {
       this.animFolder.domElement.style.display = "";
