@@ -65,8 +65,6 @@ class Texture extends EventDispatcher {
 		// update. You need to explicitly call Material.needsUpdate to trigger it to recompile.
 		this.encoding = encoding;
 
-		this.userData = {};
-
 		this.version = 0;
 		this.onUpdate = null;
 
@@ -120,8 +118,6 @@ class Texture extends EventDispatcher {
 		this.flipY = source.flipY;
 		this.unpackAlignment = source.unpackAlignment;
 		this.encoding = source.encoding;
-
-		this.userData = JSON.parse( JSON.stringify( source.userData ) );
 
 		return this;
 
@@ -228,8 +224,6 @@ class Texture extends EventDispatcher {
 			output.image = image.uuid;
 
 		}
-
-		if ( JSON.stringify( this.userData ) !== '{}' ) output.userData = this.userData;
 
 		if ( ! isRootObject ) {
 

@@ -105,7 +105,6 @@
 				case 'WRPH': // image wrap h
 
 				case 'NMOD':
-				case 'NSEL':
 				case 'NPRW':
 				case 'NPLA':
 				case 'NODS':

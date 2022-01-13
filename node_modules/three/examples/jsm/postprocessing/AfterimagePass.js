@@ -7,7 +7,7 @@ import {
 	UniformsUtils,
 	WebGLRenderTarget
 } from 'three';
-import { Pass, FullScreenQuad } from './Pass.js';
+import { Pass, FullScreenQuad } from '../postprocessing/Pass.js';
 import { AfterimageShader } from '../shaders/AfterimageShader.js';
 
 class AfterimagePass extends Pass {

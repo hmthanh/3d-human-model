@@ -3,18 +3,11 @@ import { NodeShaderStage } from './constants.js';
 
 class VaryNode extends Node {
 
-	constructor( node, name = null ) {
+	constructor( value ) {
 
 		super();
 
-		this.node = node;
-		this.name = name;
-
-	}
-
-	getHash( builder ) {
-
-		return this.name || super.getHash( builder );
+		this.value = value;
 
 	}
 
@@ -22,30 +15,22 @@ class VaryNode extends Node {
 
 		// VaryNode is auto type
 
-		return this.node.getNodeType( builder );
+		return this.value.getNodeType( builder );
 
 	}
 
 	generate( builder ) {
 
 		const type = this.getNodeType( builder );
-		const node = this.node;
-		const name = this.name;
+		const value = this.value;
 
 		const nodeVary = builder.getVaryFromNode( this, type );
+		const propertyName = builder.getPropertyName( nodeVary );
 
-		if ( name !== null ) {
+		// force nodeVary.snippet work in vertex stage
+		builder.flowNodeFromShaderStage( NodeShaderStage.Vertex, value, type, propertyName );
 
-			nodeVary.name = name;
-
-		}
-
-		const propertyName = builder.getPropertyName( nodeVary, NodeShaderStage.Vertex );
-
-		// force node run in vertex stage
-		builder.flowNodeFromShaderStage( NodeShaderStage.Vertex, node, type, propertyName );
-
-		return builder.getPropertyName( nodeVary );
+		return propertyName;
 
 	}
 

@@ -2,17 +2,17 @@ import InputNode from './InputNode.js';
 
 class ArrayInputNode extends InputNode {
 
-	constructor( nodes = [] ) {
+	constructor( value = [] ) {
 
 		super();
 
-		this.nodes = nodes;
+		this.value = value;
 
 	}
 
 	getNodeType( builder ) {
 
-		return this.nodes[ 0 ].getNodeType( builder );
+		return this.value[ 0 ].getNodeType( builder );
 
 	}
 

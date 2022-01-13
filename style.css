@@ -1,8 +1,9 @@
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
-  font-family: 'Raleway', sans-serif;
-  background: #F5F5F5;
+  font-family: "Raleway", sans-serif;
+  background: #f5f5f5;
   height: 100%;
   overflow: hidden;
 }
@@ -35,7 +36,7 @@ body {
   width: 100%;
   max-width: 500px;
   border-radius: 0.5em;
-  background: #EEE;
+  background: #eee;
   padding: 2em;
   text-align: center;
 }
@@ -46,25 +47,26 @@ body {
 }
 
 .viewer {
-  width: 100%;
-  height: 100%;
+  width: 59%;
+  height: 88%;
   flex-grow: 1;
   flex-shrink: 1;
-  position: absolute;
-  top: 0;
-  z-index: 0;
+  position: fixed;
+  bottom: 0px;
+  right: 0px;
+  z-index: 99999;
 }
 
 .axes {
-    width: 100px;
-    height: 100px;
-    margin: 20px;
-    padding: 0px;
-    position: absolute;
-    left: 0px;
-    bottom: 0px;
-    z-index: 10;
-    pointer-events: none;
+  width: 100px;
+  height: 100px;
+  margin: 20px;
+  padding: 0px;
+  position: absolute;
+  left: 0px;
+  bottom: 0px;
+  z-index: 10;
+  pointer-events: none;
 }
 
 /******************************************************************************
@@ -90,7 +92,7 @@ header {
 header h1,
 header .item,
 header .separator {
-  color: #F5F5F5;
+  color: #f5f5f5;
   font-weight: 300;
   line-height: 4rem;
   margin: 0;
@@ -211,7 +213,7 @@ header h1 + .separator {
 }
 
 .upload-btn label:hover {
-  background: #DDD;
+  background: #ddd;
 }
 
 .upload-btn svg {
@@ -222,7 +224,6 @@ header h1 + .separator {
   margin-top: -0.25em;
   margin-right: 0.25em;
 }
-
 
 /******************************************************************************
  * Validation report
@@ -250,7 +251,7 @@ header h1 + .separator {
 
 .report-table thead tr {
   background: #404040;
-  color: #FFF;
+  color: #fff;
 }
 
 .report-table th,
@@ -259,14 +260,16 @@ header h1 + .separator {
 }
 
 .report-table tr:nth-child(2n) {
-  background: #F0F0F0;
+  background: #f0f0f0;
 }
 
 /******************************************************************************
  * Validation toggle
  */
 
-.report-toggle-wrap.hidden { display: none; }
+.report-toggle-wrap.hidden {
+  display: none;
+}
 
 .report-toggle {
   cursor: pointer;
@@ -276,7 +279,7 @@ header h1 + .separator {
   left: 20px;
   height: 30px;
   box-shadow: 0px 0px 5px 0 rgba(0, 0, 0, 0.25);
-  background: #FFF;
+  background: #fff;
   box-sizing: border-box;
 
   color: #f0f0f0;
@@ -284,8 +287,16 @@ header h1 + .separator {
   border-left: 6px solid #000;
 }
 
-.report-toggle.level-1 { color: #444; background: #ffeda0; border-left-color: #feb24c; }
-.report-toggle.level-0 { color: #444; background: #f4c2be; border-left-color: #b10026; }
+.report-toggle.level-1 {
+  color: #444;
+  background: #ffeda0;
+  border-left-color: #feb24c;
+}
+.report-toggle.level-0 {
+  color: #444;
+  background: #f4c2be;
+  border-left-color: #b10026;
+}
 
 .report-toggle-text {
   line-height: 32px;
@@ -319,14 +330,16 @@ header h1 + .separator {
   background-color: #333;
 
   border-radius: 100%;
-  -webkit-animation: sk-scaleout 1.0s infinite ease-in-out;
-  animation: sk-scaleout 1.0s infinite ease-in-out;
+  -webkit-animation: sk-scaleout 1s infinite ease-in-out;
+  animation: sk-scaleout 1s infinite ease-in-out;
 }
 
 @-webkit-keyframes sk-scaleout {
-  0% { -webkit-transform: scale(0) }
+  0% {
+    -webkit-transform: scale(0);
+  }
   100% {
-    -webkit-transform: scale(1.0);
+    -webkit-transform: scale(1);
     opacity: 0;
   }
 }
@@ -335,9 +348,22 @@ header h1 + .separator {
   0% {
     -webkit-transform: scale(0);
     transform: scale(0);
-  } 100% {
-    -webkit-transform: scale(1.0);
-    transform: scale(1.0);
+  }
+  100% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
     opacity: 0;
   }
+}
+
+.viewer > canvas {
+  width: auto;
+  height: auto;
+}
+
+.viewer {
+  bottom: 35px;
+  right: 40px;
+  position: fixed;
+  z-index: 10;
 }

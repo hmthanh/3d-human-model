@@ -6,11 +6,12 @@ import WebGPUTextureUtils from './WebGPUTextureUtils.js';
 
 class WebGPUTextures {
 
-	constructor( device, properties, info ) {
+	constructor( device, properties, info, glslang ) {
 
 		this.device = device;
 		this.properties = properties;
 		this.info = info;
+		this.glslang = glslang;
 
 		this.defaultTexture = null;
 		this.defaultCubeTexture = null;
@@ -41,9 +42,7 @@ class WebGPUTextures {
 			texture.minFilter = NearestFilter;
 			texture.magFilter = NearestFilter;
 
-			this._uploadTexture( texture );
-
-			this.defaultTexture = this.getTextureGPU( texture );
+			this.defaultTexture = this._createTexture( texture );
 
 		}
 
@@ -59,9 +58,7 @@ class WebGPUTextures {
 			texture.minFilter = NearestFilter;
 			texture.magFilter = NearestFilter;
 
-			this._uploadTexture( texture );
-
-			this.defaultCubeTexture = this.getTextureGPU( texture );
+			this.defaultCubeTexture = this._createTexture( texture );
 
 		}
 
@@ -87,7 +84,7 @@ class WebGPUTextures {
 
 	updateTexture( texture ) {
 
-		let needsUpdate = false;
+		let forceUpdate = false;
 
 		const textureProperties = this.properties.get( texture );
 
@@ -120,9 +117,21 @@ class WebGPUTextures {
 
 				}
 
-				//
+				// texture creation
 
-				needsUpdate = this._uploadTexture( texture );
+				if ( textureProperties.textureGPU !== undefined ) {
+
+					// @TODO: Avoid calling of destroy() in certain scenarios. When only the contents of a texture
+					// are updated, a buffer upload should be sufficient. However, if the user changes
+					// the dimensions of the texture, format or usage, a new instance of GPUTexture is required.
+
+					textureProperties.textureGPU.destroy();
+
+				}
+
+				textureProperties.textureGPU = this._createTexture( texture );
+				textureProperties.version = texture.version;
+				forceUpdate = true;
 
 			}
 
@@ -134,11 +143,11 @@ class WebGPUTextures {
 		if ( textureProperties.initializedRTT === false ) {
 
 			textureProperties.initializedRTT = true;
-			needsUpdate = true;
+			forceUpdate = true;
 
 		}
 
-		return needsUpdate;
+		return forceUpdate;
 
 	}
 
@@ -296,14 +305,10 @@ class WebGPUTextures {
 
 	}
 
-	_uploadTexture( texture ) {
-
-		let needsUpdate = false;
+	_createTexture( texture ) {
 
 		const device = this.device;
 		const image = texture.image;
-
-		const textureProperties = this.properties.get( texture );
 
 		const { width, height, depth } = this._getSize( texture );
 		const needsMipmaps = this._needsMipmaps( texture );
@@ -321,6 +326,8 @@ class WebGPUTextures {
 
 		}
 
+		// texture creation
+
 		const textureGPUDescriptor = {
 			size: {
 				width: width,
@@ -333,19 +340,7 @@ class WebGPUTextures {
 			format: format,
 			usage: usage
 		};
-
-		// texture creation
-
-		let textureGPU = textureProperties.textureGPU;
-
-		if ( textureGPU === undefined ) {
-
-			textureGPU = device.createTexture( textureGPUDescriptor );
-			textureProperties.textureGPU = textureGPU;
-
-			needsUpdate = true;
-
-		}
+		const textureGPU = device.createTexture( textureGPUDescriptor );
 
 		// transfer texture data
 
@@ -381,9 +376,7 @@ class WebGPUTextures {
 
 		}
 
-		textureProperties.version = texture.version;
-
-		return needsUpdate;
+		return textureGPU;
 
 	}
 
@@ -488,7 +481,7 @@ class WebGPUTextures {
 
 		if ( this.utils === null ) {
 
-			this.utils = new WebGPUTextureUtils( this.device ); // only create this helper if necessary
+			this.utils = new WebGPUTextureUtils( this.device, this.glslang ); // only create this helper if necessary
 
 		}
 

@@ -296,7 +296,6 @@ class VOXDataTexture3D extends DataTexture3D {
 		this.minFilter = NearestFilter;
 		this.magFilter = LinearFilter;
 		this.unpackAlignment = 1;
-		this.needsUpdate = true;
 
 	}
 

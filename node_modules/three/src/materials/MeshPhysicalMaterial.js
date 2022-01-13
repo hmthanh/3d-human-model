@@ -16,10 +16,8 @@ import * as MathUtils from '../math/MathUtils.js';
  *  reflectivity: <float>,
  *
  *  sheen: <float>,
- *  sheenColor: <Color>,
- *  sheenColorMap: new THREE.Texture( <Image> ),
+ *  sheenTint: <Color>,
  *  sheenRoughness: <float>,
- *  sheenRoughnessMap: new THREE.Texture( <Image> ),
  *
  *  transmission: <float>,
  *  transmissionMap: new THREE.Texture( <Image> ),
@@ -27,12 +25,12 @@ import * as MathUtils from '../math/MathUtils.js';
  *  thickness: <float>,
  *  thicknessMap: new THREE.Texture( <Image> ),
  *  attenuationDistance: <float>,
- *  attenuationColor: <Color>,
+ *  attenuationTint: <Color>,
  *
  *  specularIntensity: <float>,
- *  specularIntensityMap: new THREE.Texture( <Image> ),
- *  specularColor: <Color>,
- *  specularColorMap: new THREE.Texture( <Image> )
+ *  specularIntensityhMap: new THREE.Texture( <Image> ),
+ *  specularTint: <Color>,
+ *  specularTintMap: new THREE.Texture( <Image> )
  * }
  */
 
@@ -72,22 +70,20 @@ class MeshPhysicalMaterial extends MeshStandardMaterial {
 			}
 		} );
 
-		this.sheenColor = new Color( 0x000000 );
-		this.sheenColorMap = null;
+		this.sheenTint = new Color( 0x000000 );
 		this.sheenRoughness = 1.0;
-		this.sheenRoughnessMap = null;
 
 		this.transmissionMap = null;
 
-		this.thickness = 0;
+		this.thickness = 0.01;
 		this.thicknessMap = null;
 		this.attenuationDistance = 0.0;
-		this.attenuationColor = new Color( 1, 1, 1 );
+		this.attenuationTint = new Color( 1, 1, 1 );
 
 		this.specularIntensity = 1.0;
 		this.specularIntensityMap = null;
-		this.specularColor = new Color( 1, 1, 1 );
-		this.specularColorMap = null;
+		this.specularTint = new Color( 1, 1, 1 );
+		this.specularTintMap = null;
 
 		this._sheen = 0.0;
 		this._clearcoat = 0;
@@ -172,10 +168,8 @@ class MeshPhysicalMaterial extends MeshStandardMaterial {
 		this.ior = source.ior;
 
 		this.sheen = source.sheen;
-		this.sheenColor.copy( source.sheenColor );
-		this.sheenColorMap = source.sheenColorMap;
+		this.sheenTint.copy( source.sheenTint );
 		this.sheenRoughness = source.sheenRoughness;
-		this.sheenRoughnessMap = source.sheenRoughnessMap;
 
 		this.transmission = source.transmission;
 		this.transmissionMap = source.transmissionMap;
@@ -183,12 +177,12 @@ class MeshPhysicalMaterial extends MeshStandardMaterial {
 		this.thickness = source.thickness;
 		this.thicknessMap = source.thicknessMap;
 		this.attenuationDistance = source.attenuationDistance;
-		this.attenuationColor.copy( source.attenuationColor );
+		this.attenuationTint.copy( source.attenuationTint );
 
 		this.specularIntensity = source.specularIntensity;
 		this.specularIntensityMap = source.specularIntensityMap;
-		this.specularColor.copy( source.specularColor );
-		this.specularColorMap = source.specularColorMap;
+		this.specularTint.copy( source.specularTint );
+		this.specularTintMap = source.specularTintMap;
 
 		return this;
 

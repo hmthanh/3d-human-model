@@ -1,7 +1,6 @@
 import { WEBGL } from "three/examples/jsm/WebGL.js";
 import { Viewer } from "./viewer.js";
-import { SimpleDropzone } from "simple-dropzone";
-import { ValidationController } from "./validation-controller.js";
+import { SimpleDropzone } from "./simple-dropzone";
 import queryString from "query-string";
 
 if (!(window.File && window.FileReader && window.FileList && window.Blob)) {
@@ -29,13 +28,10 @@ class App {
     this.el = el;
     this.viewer = null;
     this.viewerEl = null;
-    this.spinnerEl = el.querySelector(".spinner");
     this.dropEl = el.querySelector(".dropzone");
     this.inputEl = el.querySelector("#file-input");
-    this.validationCtrl = new ValidationController(el);
 
     this.createDropzone();
-    this.hideSpinner();
 
     const options = this.options;
 
@@ -44,9 +40,10 @@ class App {
       headerEl.style.display = "none";
     }
 
-    if (options.model) {
-      this.view(options.model, "", new Map());
-    }
+    // if (options.model) {
+    //   this.view();
+    // }
+    this.view();
   }
 
   /**
@@ -55,8 +52,9 @@ class App {
   createDropzone() {
     const dropCtrl = new SimpleDropzone(this.dropEl, this.inputEl);
     dropCtrl.on("drop", ({ files }) => this.load(files));
-    dropCtrl.on("dropstart", () => this.showSpinner());
-    dropCtrl.on("droperror", () => this.hideSpinner());
+
+    
+    // this.load("./Thanh.glb");
   }
 
   /**
@@ -77,20 +75,32 @@ class App {
    * @param  {Map<string, File>} fileMap
    */
   load(fileMap) {
-    let rootFile;
-    let rootPath;
-    Array.from(fileMap).forEach(([path, file]) => {
-      if (file.name.match(/\.(gltf|glb)$/)) {
-        rootFile = file;
-        rootPath = path.replace(file.name, "");
-      }
-    });
+    
+    // rootFile, rootPath, fileMap
+    // console.log("fileMap : ", fileMap);
+    // console.log("sdfdsf", JSON.stringify(fileMap));
+    // let myFileMap = new Map();
+    // let modelFile = new File(["Thanh.glb"], "/Thanh.glb", {
+    //   type: "",
+    // });
+    // myFileMap.set("/Thanh.glb", modelFile);
+    // console.log("myFileMap : ", myFileMap);
+    // let rootFile;
+    // let rootPath;
+    // Array.from(fileMap).forEach(([path, file]) => {
+    //   if (file.name.match(/\.(gltf|glb)$/)) {
+    //     rootFile = file;
+    //     rootPath = path.replace(file.name, "");
+    //   }
+    // });
 
-    if (!rootFile) {
-      this.onError("No .gltf or .glb asset found.");
-    }
-
-    this.view(rootFile, rootPath, fileMap);
+    // if (!rootFile) {
+    //   this.onError("No .gltf or .glb asset found.");
+    // }
+    // console.log("rootFile", rootFile);
+    // console.log("rootPath", rootPath);
+    // console.log("fileMap", fileMap);
+    this.view();
   }
 
   /**
@@ -99,27 +109,23 @@ class App {
    * @param  {string} rootPath
    * @param  {Map<string, File>} fileMap
    */
-  view(rootFile, rootPath, fileMap) {
+  view() {
     if (this.viewer) this.viewer.clear();
 
     const viewer = this.viewer || this.createViewer();
 
-    const fileURL =
-      typeof rootFile === "string" ? rootFile : URL.createObjectURL(rootFile);
+    // const fileURL =
+    //   typeof rootFile === "string" ? rootFile : URL.createObjectURL(rootFile);
 
-    const cleanup = () => {
-      this.hideSpinner();
-      if (typeof rootFile === "object") URL.revokeObjectURL(fileURL);
-    };
+    // const cleanup = () => {
+    //   if (typeof rootFile === "object") URL.revokeObjectURL(fileURL);
+    // };
 
     viewer
-      .load(fileURL, rootPath, fileMap)
+      .load()
       .catch((e) => this.onError(e))
       .then((gltf) => {
-        if (!this.options.kiosk) {
-          this.validationCtrl.validate(fileURL, rootPath, fileMap, gltf);
-        }
-        cleanup();
+        console.log("gltf", gltf);
       });
   }
 
@@ -138,14 +144,6 @@ class App {
     }
     window.alert(message);
     console.error(error);
-  }
-
-  showSpinner() {
-    this.spinnerEl.style.display = "";
-  }
-
-  hideSpinner() {
-    this.spinnerEl.style.display = "none";
   }
 }
 

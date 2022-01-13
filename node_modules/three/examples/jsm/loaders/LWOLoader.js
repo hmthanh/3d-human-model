@@ -4,10 +4,10 @@
  * @desc Load files in LWO3 and LWO2 format on Three.js
  *
  * LWO3 format specification:
- *  https://static.lightwave3d.com/sdk/2019/html/filefmts/lwo3.html
+ * 	http://static.lightwave3d.com/sdk/2018/html/filefmts/lwo3.html
  *
  * LWO2 format specification:
- *  https://static.lightwave3d.com/sdk/2019/html/filefmts/lwo2.html
+ * 	http://static.lightwave3d.com/sdk/2018/html/filefmts/lwo2.html
  *
  **/
 
@@ -465,7 +465,7 @@ class MaterialParser {
 					break;
 				case 'Roughness':
 					maps.roughnessMap = texture;
-					maps.roughness = 1;
+					maps.roughness = 0.5;
 					break;
 				case 'Specular':
 					maps.specularMap = texture;
@@ -480,7 +480,7 @@ class MaterialParser {
 					break;
 				case 'Metallic':
 					maps.metalnessMap = texture;
-					maps.metalness = 1;
+					maps.metalness = 0.5;
 					break;
 				case 'Transparency':
 				case 'Alpha':
@@ -591,7 +591,7 @@ class MaterialParser {
 
 		if ( attributes[ 'Bump Height' ] ) params.bumpScale = attributes[ 'Bump Height' ].value * 0.1;
 
-		if ( attributes[ 'Refraction Index' ] ) params.refractionRatio = 0.98 / attributes[ 'Refraction Index' ].value;
+		if ( attributes[ 'Refraction Index' ] ) params.refractionRatio = 1 / attributes[ 'Refraction Index' ].value;
 
 		this.parsePhysicalAttributes( params, attributes, maps );
 		this.parseStandardAttributes( params, attributes, maps );
@@ -707,11 +707,9 @@ class MaterialParser {
 
 				if ( attributes.metalness !== undefined ) {
 
-					attributes.metalness = 1; // For most transparent materials metalness should be set to 1 if not otherwise defined. If set to 0 no refraction will be visible
+					delete attributes.metalness;
 
 				}
-
-				attributes.opacity = 1; // transparency fades out refraction, forcing opacity to 1 ensures a closer visual match to the material in Lightwave.
 
 			} else envMap.mapping = EquirectangularReflectionMapping;
 

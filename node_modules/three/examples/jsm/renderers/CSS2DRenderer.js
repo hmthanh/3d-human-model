@@ -6,11 +6,11 @@ import {
 
 class CSS2DObject extends Object3D {
 
-	constructor( element = document.createElement( 'div' ) ) {
+ 	constructor( element ) {
 
 		super();
 
-		this.element = element;
+		this.element = element || document.createElement( 'div' );
 
 		this.element.style.position = 'absolute';
 		this.element.style.userSelect = 'none';
@@ -57,7 +57,7 @@ const _b = new Vector3();
 
 class CSS2DRenderer {
 
-	constructor( parameters = {} ) {
+	constructor() {
 
 		const _this = this;
 
@@ -68,8 +68,7 @@ class CSS2DRenderer {
 			objects: new WeakMap()
 		};
 
-		const domElement = parameters.element !== undefined ? parameters.element : document.createElement( 'div' );
-
+		const domElement = document.createElement( 'div' );
 		domElement.style.overflow = 'hidden';
 
 		this.domElement = domElement;

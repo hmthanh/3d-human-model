@@ -157,6 +157,14 @@ function WebGLMaterials( properties ) {
 			uniforms.ior.value = material.ior;
 			uniforms.refractionRatio.value = material.refractionRatio;
 
+			const maxMipLevel = properties.get( envMap ).__maxMipLevel;
+
+			if ( maxMipLevel !== undefined ) {
+
+				uniforms.maxMipLevel.value = maxMipLevel;
+
+			}
+
 		}
 
 		if ( material.lightMap ) {
@@ -245,9 +253,9 @@ function WebGLMaterials( properties ) {
 
 			uvScaleMap = material.specularIntensityMap;
 
-		} else if ( material.specularColorMap ) {
+		} else if ( material.specularTintMap ) {
 
-			uvScaleMap = material.specularColorMap;
+			uvScaleMap = material.specularTintMap;
 
 		} else if ( material.transmissionMap ) {
 
@@ -256,14 +264,6 @@ function WebGLMaterials( properties ) {
 		} else if ( material.thicknessMap ) {
 
 			uvScaleMap = material.thicknessMap;
-
-		} else if ( material.sheenColorMap ) {
-
-			uvScaleMap = material.sheenColorMap;
-
-		} else if ( material.sheenRoughnessMap ) {
-
-			uvScaleMap = material.sheenRoughnessMap;
 
 		}
 
@@ -600,21 +600,9 @@ function WebGLMaterials( properties ) {
 
 		if ( material.sheen > 0 ) {
 
-			uniforms.sheenColor.value.copy( material.sheenColor ).multiplyScalar( material.sheen );
+			uniforms.sheenTint.value.copy( material.sheenTint ).multiplyScalar( material.sheen );
 
 			uniforms.sheenRoughness.value = material.sheenRoughness;
-
-			if ( material.sheenColorMap ) {
-
-				uniforms.sheenColorMap.value = material.sheenColorMap;
-
-			}
-
-			if ( material.sheenRoughnessMap ) {
-
-				uniforms.sheenRoughnessMap.value = material.sheenRoughnessMap;
-
-			}
 
 		}
 
@@ -671,12 +659,12 @@ function WebGLMaterials( properties ) {
 			}
 
 			uniforms.attenuationDistance.value = material.attenuationDistance;
-			uniforms.attenuationColor.value.copy( material.attenuationColor );
+			uniforms.attenuationTint.value.copy( material.attenuationTint );
 
 		}
 
 		uniforms.specularIntensity.value = material.specularIntensity;
-		uniforms.specularColor.value.copy( material.specularColor );
+		uniforms.specularTint.value.copy( material.specularTint );
 
 		if ( material.specularIntensityMap ) {
 
@@ -684,9 +672,9 @@ function WebGLMaterials( properties ) {
 
 		}
 
-		if ( material.specularColorMap ) {
+		if ( material.specularTintMap ) {
 
-			uniforms.specularColorMap.value = material.specularColorMap;
+			uniforms.specularTintMap.value = material.specularTintMap;
 
 		}
 

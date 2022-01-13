@@ -2,10 +2,10 @@
 
 	class CSS2DObject extends THREE.Object3D {
 
-		constructor( element = document.createElement( 'div' ) ) {
+		constructor( element ) {
 
 			super();
-			this.element = element;
+			this.element = element || document.createElement( 'div' );
 			this.element.style.position = 'absolute';
 			this.element.style.userSelect = 'none';
 			this.element.setAttribute( 'draggable', false );
@@ -49,7 +49,7 @@
 
 	class CSS2DRenderer {
 
-		constructor( parameters = {} ) {
+		constructor() {
 
 			const _this = this;
 
@@ -60,7 +60,7 @@
 			const cache = {
 				objects: new WeakMap()
 			};
-			const domElement = parameters.element !== undefined ? parameters.element : document.createElement( 'div' );
+			const domElement = document.createElement( 'div' );
 			domElement.style.overflow = 'hidden';
 			this.domElement = domElement;
 

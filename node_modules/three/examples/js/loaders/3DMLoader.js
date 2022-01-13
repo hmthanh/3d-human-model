@@ -231,10 +231,6 @@
 
 					}
 
-					map.wrapS = texture.wrapU === 0 ? THREE.RepeatWrapping : THREE.ClampToEdgeWrapping;
-					map.wrapT = texture.wrapV === 0 ? THREE.RepeatWrapping : THREE.ClampToEdgeWrapping;
-					map.repeat.set( texture.repeat[ 0 ], texture.repeat[ 1 ] );
-
 				}
 
 			}
@@ -782,8 +778,7 @@
 			const layers = [];
 			const views = [];
 			const namedViews = [];
-			const groups = [];
-			const strings = []; //Handle objects
+			const groups = []; //Handle objects
 
 			const objs = doc.objects();
 			const cnt = objs.count;
@@ -845,13 +840,6 @@
 							type: textureType
 						};
 						const image = doc.getEmbeddedFileAsBase64( _texture.fileName );
-						texture.wrapU = _texture.wrapU;
-						texture.wrapV = _texture.wrapV;
-						texture.wrapW = _texture.wrapW;
-
-						const uvw = _texture.uvwTransform.toFloatArray( true );
-
-						texture.repeat = [ uvw[ 0 ], uvw[ 5 ] ];
 
 						if ( image ) {
 
@@ -971,18 +959,18 @@
 			// console.log( `Dimstyle Count: ${doc.dimstyles().count()}` );
 			// Handle bitmaps
 			// console.log( `Bitmap Count: ${doc.bitmaps().count()}` );
-			// Handle strings
+			// Handle strings -- this seems to be broken at the moment in rhino3dm
 			// console.log( `Document Strings Count: ${doc.strings().count()}` );
-			// Note: doc.strings().documentUserTextCount() counts any doc.strings defined in a section
-			//console.log( `Document User Text Count: ${doc.strings().documentUserTextCount()}` );
 
-			const strings_count = doc.strings().count();
-
-			for ( let i = 0; i < strings_count; i ++ ) {
-
-				strings.push( doc.strings().get( i ) );
-
-			}
+			/*
+    for( var i = 0; i < doc.strings().count(); i++ ){
+    		var _string= doc.strings().get( i );
+    		console.log(_string);
+    	var string = extractProperties( _group );
+    		strings.push( string );
+    		_string.delete();
+    	}
+    */
 
 			doc.delete();
 			return {
@@ -992,7 +980,6 @@
 				views,
 				namedViews,
 				groups,
-				strings,
 				settings
 			};
 

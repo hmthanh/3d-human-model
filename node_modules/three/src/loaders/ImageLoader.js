@@ -40,7 +40,8 @@ class ImageLoader extends Loader {
 
 		function onImageLoad() {
 
-			removeEventListeners();
+			image.removeEventListener( 'load', onImageLoad, false );
+			image.removeEventListener( 'error', onImageError, false );
 
 			Cache.add( url, this );
 
@@ -52,19 +53,13 @@ class ImageLoader extends Loader {
 
 		function onImageError( event ) {
 
-			removeEventListeners();
+			image.removeEventListener( 'load', onImageLoad, false );
+			image.removeEventListener( 'error', onImageError, false );
 
 			if ( onError ) onError( event );
 
 			scope.manager.itemError( url );
 			scope.manager.itemEnd( url );
-
-		}
-
-		function removeEventListeners() {
-
-			image.removeEventListener( 'load', onImageLoad, false );
-			image.removeEventListener( 'error', onImageError, false );
 
 		}
 

@@ -182,7 +182,6 @@ class SelectionBox {
 
 					object.getMatrixAt( instanceId, _matrix );
 					_matrix.decompose( _center, _quaternion, _scale );
-					_center.applyMatrix4( object.matrixWorld );
 
 					if ( frustum.containsPoint( _center ) ) {
 

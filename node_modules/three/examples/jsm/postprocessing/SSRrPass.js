@@ -17,7 +17,7 @@ import {
 	HalfFloatType,
 	MeshStandardMaterial
 } from 'three';
-import { Pass, FullScreenQuad } from './Pass.js';
+import { Pass, FullScreenQuad } from '../postprocessing/Pass.js';
 import { SSRrShader } from '../shaders/SSRrShader.js';
 import { SSRrDepthShader } from '../shaders/SSRrShader.js';
 import { CopyShader } from '../shaders/CopyShader.js';

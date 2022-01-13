@@ -1,6 +1,7 @@
 import {
 	Clock,
 	Color,
+	LinearEncoding,
 	Matrix4,
 	Mesh,
 	RepeatWrapping,
@@ -16,8 +17,8 @@ import { Refractor } from '../objects/Refractor.js';
 
 /**
  * References:
- *	https://alex.vlachos.com/graphics/Vlachos-SIGGRAPH10-WaterFlow.pdf
- *	http://graphicsrunner.blogspot.de/2010/08/water-using-flow-maps.html
+ *	http://www.valvesoftware.com/publications/2010/siggraph2010_vlachos_waterflow.pdf
+ * 	http://graphicsrunner.blogspot.de/2010/08/water-using-flow-maps.html
  *
  */
 
@@ -40,6 +41,7 @@ class Water extends Mesh {
 		const reflectivity = options.reflectivity || 0.02;
 		const scale = options.scale || 1;
 		const shader = options.shader || Water.WaterShader;
+		const encoding = options.encoding !== undefined ? options.encoding : LinearEncoding;
 
 		const textureLoader = new TextureLoader();
 
@@ -71,13 +73,15 @@ class Water extends Mesh {
 		const reflector = new Reflector( geometry, {
 			textureWidth: textureWidth,
 			textureHeight: textureHeight,
-			clipBias: clipBias
+			clipBias: clipBias,
+			encoding: encoding
 		} );
 
 		const refractor = new Refractor( geometry, {
 			textureWidth: textureWidth,
 			textureHeight: textureHeight,
-			clipBias: clipBias
+			clipBias: clipBias,
+			encoding: encoding
 		} );
 
 		reflector.matrixAutoUpdate = false;

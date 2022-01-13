@@ -5,7 +5,6 @@
  *  dashed: <boolean>,
  *  dashScale: <float>,
  *  dashSize: <float>,
- *  dashOffset: <float>,
  *  gapSize: <float>,
  *  resolution: <Vector2>, // to be set by renderer
  * }
@@ -17,7 +16,7 @@ import {
 	UniformsLib,
 	UniformsUtils,
 	Vector2
-} from 'three';
+} from "three";
 
 
 UniformsLib.line = {
@@ -25,7 +24,6 @@ UniformsLib.line = {
 	worldUnits: { value: 1 },
 	linewidth: { value: 1 },
 	resolution: { value: new Vector2( 1, 1 ) },
-	dashOffset: { value: 0 },
 	dashScale: { value: 1 },
 	dashSize: { value: 1 },
 	gapSize: { value: 1 } // todo FIX - maybe change to totalSize
@@ -41,7 +39,7 @@ ShaderLib[ 'line' ] = {
 	] ),
 
 	vertexShader:
-	/* glsl */`
+		/* glsl */`
 		#include <common>
 		#include <color_pars_vertex>
 		#include <fog_pars_vertex>
@@ -57,23 +55,10 @@ ShaderLib[ 'line' ] = {
 		attribute vec3 instanceColorStart;
 		attribute vec3 instanceColorEnd;
 
-		#ifdef WORLD_UNITS
-
-			varying vec4 worldPos;
-			varying vec3 worldStart;
-			varying vec3 worldEnd;
-
-			#ifdef USE_DASH
-
-				varying vec2 vUv;
-
-			#endif
-
-		#else
-
-			varying vec2 vUv;
-
-		#endif
+		varying vec2 vUv;
+		varying vec4 worldPos;
+		varying vec3 worldStart;
+		varying vec3 worldEnd;
 
 		#ifdef USE_DASH
 
@@ -110,26 +95,19 @@ ShaderLib[ 'line' ] = {
 			#ifdef USE_DASH
 
 				vLineDistance = ( position.y < 0.5 ) ? dashScale * instanceDistanceStart : dashScale * instanceDistanceEnd;
-				vUv = uv;
 
 			#endif
 
 			float aspect = resolution.x / resolution.y;
 
+			vUv = uv;
+
 			// camera space
 			vec4 start = modelViewMatrix * vec4( instanceStart, 1.0 );
 			vec4 end = modelViewMatrix * vec4( instanceEnd, 1.0 );
 
-			#ifdef WORLD_UNITS
-
-				worldStart = start.xyz;
-				worldEnd = end.xyz;
-
-			#else
-
-				vUv = uv;
-
-			#endif
+			worldStart = start.xyz;
+			worldEnd = end.xyz;
 
 			// special case for perspective projection, and segments that terminate either in, or behind, the camera plane
 			// clearly the gpu firmware has a way of addressing this issue when projecting into ndc space
@@ -272,44 +250,30 @@ ShaderLib[ 'line' ] = {
 		`,
 
 	fragmentShader:
-	/* glsl */`
+		/* glsl */`
 		uniform vec3 diffuse;
 		uniform float opacity;
 		uniform float linewidth;
 
 		#ifdef USE_DASH
 
-			uniform float dashOffset;
 			uniform float dashSize;
 			uniform float gapSize;
 
 		#endif
 
 		varying float vLineDistance;
-
-		#ifdef WORLD_UNITS
-
-			varying vec4 worldPos;
-			varying vec3 worldStart;
-			varying vec3 worldEnd;
-
-			#ifdef USE_DASH
-
-				varying vec2 vUv;
-
-			#endif
-
-		#else
-
-			varying vec2 vUv;
-
-		#endif
+		varying vec4 worldPos;
+		varying vec3 worldStart;
+		varying vec3 worldEnd;
 
 		#include <common>
 		#include <color_pars_fragment>
 		#include <fog_pars_fragment>
 		#include <logdepthbuf_pars_fragment>
 		#include <clipping_planes_pars_fragment>
+
+		varying vec2 vUv;
 
 		vec2 closestLineToLine(vec3 p1, vec3 p2, vec3 p3, vec3 p4) {
 
@@ -348,7 +312,7 @@ ShaderLib[ 'line' ] = {
 
 				if ( vUv.y < - 1.0 || vUv.y > 1.0 ) discard; // discard endcaps
 
-				if ( mod( vLineDistance + dashOffset, dashSize + gapSize ) > dashSize ) discard; // todo - FIX
+				if ( mod( vLineDistance, dashSize + gapSize ) > dashSize ) discard; // todo - FIX
 
 			#endif
 
@@ -369,7 +333,7 @@ ShaderLib[ 'line' ] = {
 
 				#ifndef USE_DASH
 
-					#ifdef USE_ALPHA_TO_COVERAGE
+					#ifdef ALPHA_TO_COVERAGE
 
 						float dnorm = fwidth( norm );
 						alpha = 1.0 - smoothstep( 0.5 - dnorm, 0.5 + dnorm, norm );
@@ -388,7 +352,7 @@ ShaderLib[ 'line' ] = {
 
 			#else
 
-				#ifdef USE_ALPHA_TO_COVERAGE
+				#ifdef ALPHA_TO_COVERAGE
 
 					// artifacts appear on some hardware if a derivative is taken within a conditional
 					float a = vUv.x;
@@ -661,13 +625,13 @@ class LineMaterial extends ShaderMaterial {
 
 				get: function () {
 
-					return Boolean( 'USE_ALPHA_TO_COVERAGE' in this.defines );
+					return Boolean( 'ALPHA_TO_COVERAGE' in this.defines );
 
 				},
 
 				set: function ( value ) {
 
-					if ( Boolean( value ) !== Boolean( 'USE_ALPHA_TO_COVERAGE' in this.defines ) ) {
+					if ( Boolean( value ) !== Boolean( 'ALPHA_TO_COVERAGE' in this.defines ) ) {
 
 						this.needsUpdate = true;
 
@@ -675,12 +639,12 @@ class LineMaterial extends ShaderMaterial {
 
 					if ( value === true ) {
 
-						this.defines.USE_ALPHA_TO_COVERAGE = '';
+						this.defines.ALPHA_TO_COVERAGE = '';
 						this.extensions.derivatives = true;
 
 					} else {
 
-						delete this.defines.USE_ALPHA_TO_COVERAGE;
+						delete this.defines.ALPHA_TO_COVERAGE;
 						this.extensions.derivatives = false;
 
 					}

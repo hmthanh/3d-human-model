@@ -11,12 +11,6 @@ class AttributeNode extends Node {
 
 	}
 
-	getHash( builder ) {
-
-		return this.getAttributeName( builder );
-
-	}
-
 	setAttributeName( attributeName ) {
 
 		this._attributeName = attributeName;

@@ -5,6 +5,7 @@ import {
 /**
  * Convolution shader
  * ported from o3d sample to WebGL / GLSL
+ * http://o3d.googlecode.com/svn/trunk/samples/convolution.html
  */
 
 const ConvolutionShader = {

@@ -13,34 +13,26 @@
 			const textures = {};
 			scene.traverseVisible( object => {
 
-				if ( object.isMesh ) {
+				if ( object.isMesh && object.material.isMeshStandardMaterial ) {
 
-					if ( object.material.isMeshStandardMaterial ) {
+					const geometry = object.geometry;
+					const material = object.material;
+					const geometryFileName = 'geometries/Geometry_' + geometry.id + '.usd';
 
-						const geometry = object.geometry;
-						const material = object.material;
-						const geometryFileName = 'geometries/Geometry_' + geometry.id + '.usd';
+					if ( ! ( geometryFileName in files ) ) {
 
-						if ( ! ( geometryFileName in files ) ) {
-
-							const meshObject = buildMeshObject( geometry );
-							files[ geometryFileName ] = buildUSDFileAsString( meshObject );
-
-						}
-
-						if ( ! ( material.uuid in materials ) ) {
-
-							materials[ material.uuid ] = material;
-
-						}
-
-						output += buildXform( object, geometry, material );
-
-					} else {
-
-						console.warn( 'THREE.USDZExporter: Unsupported material type (USDZ only supports MeshStandardMaterial)', object );
+						const meshObject = buildMeshObject( geometry );
+						files[ geometryFileName ] = buildUSDFileAsString( meshObject );
 
 					}
+
+					if ( ! ( material.uuid in materials ) ) {
+
+						materials[ material.uuid ] = material;
+
+					}
+
+					output += buildXform( object, geometry, material );
 
 				}
 
@@ -236,33 +228,25 @@ def "Geometry"
 
 	function buildMeshVertexCount( geometry ) {
 
-		const count = geometry.index !== null ? geometry.index.count : geometry.attributes.position.count;
+		const count = geometry.index !== null ? geometry.index.array.length : geometry.attributes.position.count;
 		return Array( count / 3 ).fill( 3 ).join( ', ' );
 
 	}
 
 	function buildMeshVertexIndices( geometry ) {
 
-		const index = geometry.index;
+		if ( geometry.index !== null ) {
+
+			return geometry.index.array.join( ', ' );
+
+		}
+
 		const array = [];
+		const length = geometry.attributes.position.count;
 
-		if ( index !== null ) {
+		for ( let i = 0; i < length; i ++ ) {
 
-			for ( let i = 0; i < index.count; i ++ ) {
-
-				array.push( index.getX( i ) );
-
-			}
-
-		} else {
-
-			const length = geometry.attributes.position.count;
-
-			for ( let i = 0; i < length; i ++ ) {
-
-				array.push( i );
-
-			}
+			array.push( i );
 
 		}
 
@@ -280,13 +264,11 @@ def "Geometry"
 		}
 
 		const array = [];
+		const data = attribute.array;
 
-		for ( let i = 0; i < attribute.count; i ++ ) {
+		for ( let i = 0; i < data.length; i += 3 ) {
 
-			const x = attribute.getX( i );
-			const y = attribute.getY( i );
-			const z = attribute.getZ( i );
-			array.push( `(${x.toPrecision( PRECISION )}, ${y.toPrecision( PRECISION )}, ${z.toPrecision( PRECISION )})` );
+			array.push( `(${data[ i + 0 ].toPrecision( PRECISION )}, ${data[ i + 1 ].toPrecision( PRECISION )}, ${data[ i + 2 ].toPrecision( PRECISION )})` );
 
 		}
 
@@ -304,12 +286,11 @@ def "Geometry"
 		}
 
 		const array = [];
+		const data = attribute.array;
 
-		for ( let i = 0; i < attribute.count; i ++ ) {
+		for ( let i = 0; i < data.length; i += 2 ) {
 
-			const x = attribute.getX( i );
-			const y = attribute.getY( i );
-			array.push( `(${x.toPrecision( PRECISION )}, ${1 - y.toPrecision( PRECISION )})` );
+			array.push( `(${data[ i + 0 ].toPrecision( PRECISION )}, ${1 - data[ i + 1 ].toPrecision( PRECISION )})` );
 
 		}
 

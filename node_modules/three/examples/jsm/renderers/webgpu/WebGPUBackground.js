@@ -77,7 +77,7 @@ class WebGPUBackground {
 
 			if ( renderer.autoClearStencil === true ) {
 
-				depthStencilAttachment.stencilLoadValue = renderer._clearStencil;
+				depthStencilAttachment.stencilLoadValue = renderer._clearDepth;
 
 			} else {
 

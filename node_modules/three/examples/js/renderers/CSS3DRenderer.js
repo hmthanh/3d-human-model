@@ -12,10 +12,10 @@
 
 	class CSS3DObject extends THREE.Object3D {
 
-		constructor( element = document.createElement( 'div' ) ) {
+		constructor( element ) {
 
 			super();
-			this.element = element;
+			this.element = element || document.createElement( 'div' );
 			this.element.style.position = 'absolute';
 			this.element.style.pointerEvents = 'auto';
 			this.element.style.userSelect = 'none';
@@ -75,7 +75,7 @@
 
 	class CSS3DRenderer {
 
-		constructor( parameters = {} ) {
+		constructor() {
 
 			const _this = this;
 
@@ -90,7 +90,7 @@
 				},
 				objects: new WeakMap()
 			};
-			const domElement = parameters.element !== undefined ? parameters.element : document.createElement( 'div' );
+			const domElement = document.createElement( 'div' );
 			domElement.style.overflow = 'hidden';
 			this.domElement = domElement;
 			const cameraElement = document.createElement( 'div' );

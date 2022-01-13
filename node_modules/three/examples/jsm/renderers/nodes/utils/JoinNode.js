@@ -2,30 +2,30 @@ import Node from '../core/Node.js';
 
 class JoinNode extends Node {
 
-	constructor( nodes = [] ) {
+	constructor( values = [] ) {
 
 		super();
 
-		this.nodes = nodes;
+		this.values = values;
 
 	}
 
 	getNodeType( builder ) {
 
-		return builder.getTypeFromLength( this.nodes.length );
+		return builder.getTypeFromLength( this.values.length );
 
 	}
 
 	generate( builder ) {
 
 		const type = this.getNodeType( builder );
-		const nodes = this.nodes;
+		const values = this.values;
 
 		const snippetValues = [];
 
-		for ( let i = 0; i < nodes.length; i ++ ) {
+		for ( let i = 0; i < values.length; i ++ ) {
 
-			const input = nodes[ i ];
+			const input = values[ i ];
 
 			const inputSnippet = input.build( builder, 'float' );
 
@@ -33,7 +33,7 @@ class JoinNode extends Node {
 
 		}
 
-		return `${ builder.getType( type ) }( ${ snippetValues.join( ', ' ) } )`;
+		return `${type}( ${ snippetValues.join( ', ' ) } )`;
 
 	}
 

@@ -248,7 +248,7 @@ class SVGLoader extends Loader {
 
 							}
 
-							if ( j === 0 ) firstPoint.copy( point );
+							if ( j === 0 && doSetFirstPoint === true ) firstPoint.copy( point );
 
 						}
 
@@ -440,7 +440,7 @@ class SVGLoader extends Loader {
 
 							}
 
-							if ( j === 0 ) firstPoint.copy( point );
+							if ( j === 0 && doSetFirstPoint === true ) firstPoint.copy( point );
 
 						}
 
@@ -2084,7 +2084,7 @@ class SVGLoader extends Loader {
 
 			}
 
-			return { curves: p.curves, points: points, isCW: ShapeUtils.isClockWise( points ), identifier: identifier ++, boundingBox: new Box2( new Vector2( minX, minY ), new Vector2( maxX, maxY ) ) };
+			return { points: points, isCW: ShapeUtils.isClockWise( points ), identifier: identifier ++, boundingBox: new Box2( new Vector2( minX, minY ), new Vector2( maxX, maxY ) ) };
 
 		} );
 
@@ -2101,15 +2101,12 @@ class SVGLoader extends Loader {
 
 			if ( ! amIAHole.isHole ) {
 
-				const shape = new Shape();
-				shape.curves = p.curves;
+				const shape = new Shape( p.points );
 				const holes = isAHole.filter( h => h.isHole && h.for === p.identifier );
 				holes.forEach( h => {
 
-					const hole = simplePaths[ h.identifier ];
-					const path = new Path();
-					path.curves = hole.curves;
-					shape.holes.push( path );
+					const path = simplePaths[ h.identifier ];
+					shape.holes.push( new Path( path.points ) );
 
 				} );
 				shapesToReturn.push( shape );
