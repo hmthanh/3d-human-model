@@ -45156,8 +45156,8 @@ var Viewer = /*#__PURE__*/function () {
       actionStates: {},
       camera: DEFAULT_CAMERA,
       wireframe: false,
-      skeleton: false,
-      grid: false,
+      skeleton: true,
+      grid: true,
       // Lights
       addLights: true,
       exposure: 1.0,
@@ -45258,16 +45258,15 @@ var Viewer = /*#__PURE__*/function () {
         // Intercept and override relative URLs.
         var loader = new _GLTFLoader.GLTFLoader(MANAGER).setCrossOrigin("anonymous").setDRACOLoader(DRACO_LOADER).setKTX2Loader(KTX2_LOADER.detectSupport(_this.renderer)).setMeshoptDecoder(_meshopt_decoderModule.MeshoptDecoder);
         loader.load(_Thanh.default, function (gltf) {
-          console.log("gltf", gltf);
+          // console.log("gltf2", gltf);
           var scene = gltf.scene || gltf.scenes[0];
           var clips = gltf.animations || [];
 
           if (!scene) {
             // Valid, but not supported by this viewer.
             throw new Error("This model contains no scene, and cannot be viewed here. However," + " it may contain individual 3D resources.");
-          }
+          } // console.log("scene", scene);
 
-          console.log("scene", scene);
 
           _this.setContent(scene, clips); // See: https://github.com/google/draco/issues/349
           // DRACOLoader.releaseDecoderModule();
@@ -45503,8 +45502,11 @@ var Viewer = /*#__PURE__*/function () {
         material.wireframe = _this8.state.wireframe;
       });
       this.content.traverse(function (node) {
+        Performance;
+
         if (node.isMesh && node.skeleton && _this8.state.skeleton) {
           var helper = new _three.SkeletonHelper(node.skeleton.bones[0].parent);
+          console.log("node.skeleton.bones[0]", node.skeleton.bones[0]);
           helper.material.linewidth = 3;
 
           _this8.scene.add(helper);
@@ -45559,6 +45561,7 @@ var Viewer = /*#__PURE__*/function () {
       this.axesRenderer.setSize(this.axesDiv.clientWidth, this.axesDiv.clientHeight);
       this.axesCamera.up = this.defaultCamera.up;
       this.axesCorner = new _three.AxesHelper(5);
+      Performance;
       this.axesScene.add(this.axesCorner);
       this.axesDiv.appendChild(this.axesRenderer.domElement);
     }
@@ -45690,7 +45693,7 @@ var Viewer = /*#__PURE__*/function () {
       });
 
       if (cameraNames.length) {
-        // this.cameraFolder.domElement.style.display = "";
+        this.cameraFolder.domElement.style.display = "";
         if (this.cameraCtrl) this.cameraCtrl.remove();
         var cameraOptions = [DEFAULT_CAMERA].concat(cameraNames);
         this.cameraCtrl = this.cameraFolder.add(this.state, "camera", cameraOptions);
@@ -46450,8 +46453,8 @@ var App = /*#__PURE__*/function () {
   function App(documentBody, location) {
     _classCallCheck(this, App);
 
-    var hash = location.hash ? _queryString.default.parse(location.hash) : {};
-    console.log("hash", hash);
+    var hash = location.hash ? _queryString.default.parse(location.hash) : {}; // console.log("hash", hash);
+
     this.options = {
       kiosk: Boolean(hash.kiosk),
       model: hash.model || "",
@@ -46503,7 +46506,10 @@ var App = /*#__PURE__*/function () {
       viewer.load().catch(function (e) {
         _this.onError(e);
       }).then(function (gltf) {
-        console.log("gltf", gltf);
+        var Object3D = gltf.scene.children[0];
+        console.log("gltf.scene.children[0] ", gltf.scene.children[0]);
+        var Bone = Object3D.children[0];
+        console.log("gltf", Object3D.children[0]);
       });
     }
     /**
@@ -46562,7 +46568,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "45563" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "40837" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

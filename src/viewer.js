@@ -85,8 +85,8 @@ export class Viewer {
       actionStates: {},
       camera: DEFAULT_CAMERA,
       wireframe: false,
-      skeleton: false,
-      grid: false,
+      skeleton: true,
+      grid: true,
 
       // Lights
       addLights: true,
@@ -161,7 +161,6 @@ export class Viewer {
     this.animate = this.animate.bind(this);
     requestAnimationFrame(this.animate);
     window.addEventListener("resize", this.resize.bind(this), false);
-    
   }
 
   animate(time) {
@@ -215,7 +214,7 @@ export class Viewer {
       loader.load(
         Thanh,
         (gltf) => {
-          console.log("gltf", gltf);
+          // console.log("gltf2", gltf);
           const scene = gltf.scene || gltf.scenes[0];
           const clips = gltf.animations || [];
 
@@ -226,7 +225,7 @@ export class Viewer {
                 " it may contain individual 3D resources."
             );
           }
-          console.log("scene", scene);
+          // console.log("scene", scene);
           this.setContent(scene, clips);
 
           // See: https://github.com/google/draco/issues/349
@@ -451,8 +450,10 @@ export class Viewer {
     });
 
     this.content.traverse((node) => {
+      Performance;
       if (node.isMesh && node.skeleton && this.state.skeleton) {
         const helper = new SkeletonHelper(node.skeleton.bones[0].parent);
+        console.log("node.skeleton.bones[0]", node.skeleton.bones[0]);
         helper.material.linewidth = 3;
         this.scene.add(helper);
         this.skeletonHelpers.push(helper);
@@ -508,6 +509,7 @@ export class Viewer {
     this.axesCamera.up = this.defaultCamera.up;
 
     this.axesCorner = new AxesHelper(5);
+    Performance;
     this.axesScene.add(this.axesCorner);
     this.axesDiv.appendChild(this.axesRenderer.domElement);
   }
@@ -640,7 +642,7 @@ export class Viewer {
     });
 
     if (cameraNames.length) {
-      // this.cameraFolder.domElement.style.display = "";
+      this.cameraFolder.domElement.style.display = "";
       if (this.cameraCtrl) this.cameraCtrl.remove();
       const cameraOptions = [DEFAULT_CAMERA].concat(cameraNames);
       this.cameraCtrl = this.cameraFolder.add(

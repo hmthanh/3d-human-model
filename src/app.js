@@ -15,7 +15,7 @@ class App {
    */
   constructor(documentBody, location) {
     const hash = location.hash ? queryString.parse(location.hash) : {};
-    console.log("hash", hash);
+    // console.log("hash", hash);
     this.options = {
       kiosk: Boolean(hash.kiosk),
       model: hash.model || "",
@@ -68,10 +68,14 @@ class App {
     viewer
       .load()
       .catch((e) => {
-        this.onError(e)
+        this.onError(e);
       })
       .then((gltf) => {
-        console.log("gltf", gltf);
+        const Object3D = gltf.scene.children[0];
+        console.log("gltf.scene.children[0] ", gltf.scene.children[0]);
+
+        const Bone =Object3D.children[0]
+        console.log("gltf", Object3D.children[0]);
       });
   }
 
