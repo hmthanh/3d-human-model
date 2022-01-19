@@ -689,9 +689,9 @@ export class Viewer {
           this.newBone = this.gui.addFolder(bone.name);
           console.log("Bone");
           console.log(bone);
-          this.newBone.add(bone.rotation, 'x', -1, 1, 0.01);
-          this.newBone.add(bone.rotation, 'y', -1, 1, 0.01);
-          this.newBone.add(bone.rotation, 'z', -1, 1, 0.01);
+          this.newBone.add(bone.rotation, 'x', -5, 5, 0.01);
+          this.newBone.add(bone.rotation, 'y', -5, 5, 0.01);
+          this.newBone.add(bone.rotation, 'z', -5, 5, 0.01);
         });
       }
     }

@@ -45738,11 +45738,11 @@ var Viewer = /*#__PURE__*/function () {
             console.log("Bone");
             console.log(bone);
 
-            _this10.newBone.add(bone.rotation, 'x', -1, 1, 0.01);
+            _this10.newBone.add(bone.rotation, 'x', -5, 5, 0.01);
 
-            _this10.newBone.add(bone.rotation, 'y', -1, 1, 0.01);
+            _this10.newBone.add(bone.rotation, 'y', -5, 5, 0.01);
 
-            _this10.newBone.add(bone.rotation, 'z', -1, 1, 0.01);
+            _this10.newBone.add(bone.rotation, 'z', -5, 5, 0.01);
           });
         }
       } // if (this.clips.length) {
