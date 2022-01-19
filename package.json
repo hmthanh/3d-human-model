@@ -24,6 +24,7 @@
     ]
   },
   "scripts": {
+    "start": "parcel index.html --port 5000 --open",
     "build": "parcel build index.html --public-url . --out-dir docs",
     "build:registry": "curl https://rawgit.com/KhronosGroup/glTF-Generator-Registry/main/registry.json -o lib/gltf-generator-registry.json",
     "dev": "parcel index.html --port 5000",

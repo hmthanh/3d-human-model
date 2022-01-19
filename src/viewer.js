@@ -33,6 +33,8 @@ import Thanh from "../assets/model/Thanh.glb";
 import { GUI } from "dat.gui";
 
 import { environments } from "../assets/environment/index.js";
+import { Bone } from "three";
+import { SkinnedMesh } from "three";
 
 const DEFAULT_CAMERA = "[default]";
 
@@ -85,8 +87,8 @@ export class Viewer {
       actionStates: {},
       camera: DEFAULT_CAMERA,
       wireframe: false,
-      skeleton: true,
-      grid: true,
+      skeleton: false,
+      grid: false,
 
       // Lights
       addLights: true,
@@ -228,7 +230,6 @@ export class Viewer {
           // console.log("scene", scene);
           this.setContent(scene, clips);
 
-          // See: https://github.com/google/draco/issues/349
           // DRACOLoader.releaseDecoderModule();
 
           resolve(gltf);
@@ -453,7 +454,7 @@ export class Viewer {
       Performance;
       if (node.isMesh && node.skeleton && this.state.skeleton) {
         const helper = new SkeletonHelper(node.skeleton.bones[0].parent);
-        console.log("node.skeleton.bones[0]", node.skeleton.bones[0]);
+        // console.log("node.skeleton.bones[0]", node.skeleton.bones[0]);
         helper.material.linewidth = 3;
         this.scene.add(helper);
         this.skeletonHelpers.push(helper);
@@ -523,94 +524,88 @@ export class Viewer {
 
     // Display controls.
     const dispFolder = gui.addFolder("Display");
-    const envBackgroundCtrl = dispFolder.add(this.state, "background");
-    envBackgroundCtrl.onChange(() => this.updateEnvironment());
-    const wireframeCtrl = dispFolder.add(this.state, "wireframe");
-    wireframeCtrl.onChange(() => this.updateDisplay());
+    // const envBackgroundCtrl = dispFolder.add(this.state, "background");
+    // envBackgroundCtrl.onChange(() => this.updateEnvironment());
+    // const wireframeCtrl = dispFolder.add(this.state, "wireframe");
+    // wireframeCtrl.onChange(() => this.updateDisplay());
     const skeletonCtrl = dispFolder.add(this.state, "skeleton");
     skeletonCtrl.onChange(() => this.updateDisplay());
-    const gridCtrl = dispFolder.add(this.state, "grid");
-    gridCtrl.onChange(() => this.updateDisplay());
-    dispFolder.add(this.controls, "autoRotate");
-    dispFolder.add(this.controls, "screenSpacePanning");
-    // Lighting controls.
-    const lightFolder = gui.addFolder("Lighting");
+    // const gridCtrl = dispFolder.add(this.state, "grid");
+    // gridCtrl.onChange(() => this.updateDisplay());
+    // dispFolder.add(this.controls, "autoRotate");
+    // dispFolder.add(this.controls, "screenSpacePanning");
+    // // Lighting controls.
+    // const lightFolder = gui.addFolder("Lighting");
 
-    const encodingCtrl = lightFolder.add(this.state, "textureEncoding", [
-      "sRGB",
-      "Linear",
-    ]);
-    encodingCtrl.onChange(() => this.updateTextureEncoding());
-    lightFolder
-      .add(this.renderer, "outputEncoding", {
-        sRGB: sRGBEncoding,
-        Linear: LinearEncoding,
-      })
-      .onChange(() => {
-        this.renderer.outputEncoding = Number(this.renderer.outputEncoding);
-        traverseMaterials(this.content, (material) => {
-          material.needsUpdate = true;
-        });
-      });
-    const envMapCtrl = lightFolder.add(
-      this.state,
-      "environment",
-      environments.map((env) => env.name)
-    );
-    envMapCtrl.onChange(() => this.updateEnvironment());
-    [
-      lightFolder.add(this.state, "exposure", 0, 2),
-      lightFolder.add(this.state, "addLights").listen(),
-      lightFolder.add(this.state, "ambientIntensity", 0, 2),
-      lightFolder.addColor(this.state, "ambientColor"),
-      lightFolder.add(this.state, "directIntensity", 0, 4), // TODO(#116)
-      lightFolder.addColor(this.state, "directColor"),
-    ].forEach((ctrl) => ctrl.onChange(() => this.updateLights()));
-    // Animation contr2ols.
-    this.animFolder = gui.addFolder("Animation");
-    this.animFolder.domElement.style.display = "none";
-    const playbackSpeedCtrl = this.animFolder.add(
-      this.state,
-      "playbackSpeed",
-      0,
-      1
-    );
-    playbackSpeedCtrl.onChange((speed) => {
-      if (this.mixer) this.mixer.timeScale = speed;
-    });
-    this.animFolder.add({ playAll: () => this.playAllClips() }, "playAll");
+    // const encodingCtrl = lightFolder.add(this.state, "textureEncoding", [
+    //   "sRGB",
+    //   "Linear",
+    // ]);
+    // encodingCtrl.onChange(() => this.updateTextureEncoding());
+    // lightFolder
+    //   .add(this.renderer, "outputEncoding", {
+    //     sRGB: sRGBEncoding,
+    //     Linear: LinearEncoding,
+    //   })
+    //   .onChange(() => {
+    //     this.renderer.outputEncoding = Number(this.renderer.outputEncoding);
+    //     traverseMaterials(this.content, (material) => {
+    //       material.needsUpdate = true;
+    //     });
+    //   });
+    // const envMapCtrl = lightFolder.add(
+    //   this.state,
+    //   "environment",
+    //   environments.map((env) => env.name)
+    // );
+    // envMapCtrl.onChange(() => this.updateEnvironment());
+    // [
+    //   lightFolder.add(this.state, "exposure", 0, 2),
+    //   lightFolder.add(this.state, "addLights").listen(),
+    //   lightFolder.add(this.state, "ambientIntensity", 0, 2),
+    //   lightFolder.addColor(this.state, "ambientColor"),
+    //   lightFolder.add(this.state, "directIntensity", 0, 4), // TODO(#116)
+    //   lightFolder.addColor(this.state, "directColor"),
+    // ].forEach((ctrl) => ctrl.onChange(() => this.updateLights()));
+
+    // // Animation contr2ols.
+    // this.animFolder = gui.addFolder("Animation");
+    // this.animFolder.domElement.style.display = "none";
+    // const playbackSpeedCtrl = this.animFolder.add(
+    //   this.state,
+    //   "playbackSpeed",
+    //   0,
+    //   1
+    // );
+    // playbackSpeedCtrl.onChange((speed) => {
+    //   if (this.mixer) this.mixer.timeScale = speed;
+    // });
+    // this.animFolder.add({ playAll: () => this.playAllClips() }, "playAll");
     // Morph target controls.
-    this.morphFolder = gui.addFolder("Morph Targets");
-    this.morphFolder.domElement.style.display = "none";
+    this.morphFolder = gui.addFolder("Morph Targets2");
 
     // Camera controls.
     this.cameraFolder2 = gui.addFolder("Cameras");
     this.cameraFolder2
       .add(this.defaultCamera.position, "x", -50, 50)
       .step(0.5)
-      .onChange((value) => {
-        this.defaultCamera.position.x = value;
-      });
+      .listen();
     this.cameraFolder2
       .add(this.defaultCamera.position, "y", -50, 50)
       .step(0.5)
-      .onChange((value) => {
-        this.defaultCamera.position.y = value;
-      });
+      .listen();
     this.cameraFolder2
       .add(this.defaultCamera.position, "z", -100, 100)
       .step(0.5)
-      .onChange((value) => {
-        this.defaultCamera.position.z = value;
-      });
+      .listen();
 
-    // Stats.
-    const perfFolder = gui.addFolder("Performance");
-    const perfLi = document.createElement("li");
-    this.stats.dom.style.position = "static";
-    perfLi.appendChild(this.stats.dom);
-    perfLi.classList.add("gui-stats");
-    perfFolder.__ul.appendChild(perfLi);
+    // // Stats.
+    // const perfFolder = gui.addFolder("Performance");
+    // const perfLi = document.createElement("li");
+    // this.stats.dom.style.position = "static";
+    // perfLi.appendChild(this.stats.dom);
+    // perfLi.classList.add("gui-stats");
+    // perfFolder.__ul.appendChild(perfLi);
     const guiWrap = document.createElement("div");
     this.el.appendChild(guiWrap);
     guiWrap.classList.add("gui-wrap");
@@ -623,84 +618,110 @@ export class Viewer {
 
     this.morphCtrls.forEach((ctrl) => ctrl.remove());
     this.morphCtrls.length = 0;
-    this.morphFolder.domElement.style.display = "none";
 
     this.animCtrls.forEach((ctrl) => ctrl.remove());
     this.animCtrls.length = 0;
-    this.animFolder.domElement.style.display = "none";
 
     const cameraNames = [];
     const morphMeshes = [];
+    const bones = [];
     this.content.traverse((node) => {
-      if (node.isMesh && node.morphTargetInfluences) {
+      console.log(node);
+      // if (node.isMesh && node.type == "SkinnedMesh") {
+      if (node instanceof SkinnedMesh) {
         morphMeshes.push(node);
       }
-      if (node.isCamera) {
-        node.name = node.name || `VIEWER__camera_${cameraNames.length + 1}`;
-        cameraNames.push(node.name);
+      // if (node.isMesh && node.morphTargetInfluences) {
+      //   morphMeshes.push(node);
+      // }
+      if (node instanceof Bone) {
+        bones.push(node);
       }
+      // if (node.isCamera) {
+      //   node.name = node.name || `VIEWER__camera_${cameraNames.length + 1}`;
+      //   cameraNames.push(node.name);
+      // }
     });
 
-    if (cameraNames.length) {
-      this.cameraFolder.domElement.style.display = "";
-      if (this.cameraCtrl) this.cameraCtrl.remove();
-      const cameraOptions = [DEFAULT_CAMERA].concat(cameraNames);
-      this.cameraCtrl = this.cameraFolder.add(
-        this.state,
-        "camera",
-        cameraOptions
-      );
-      this.cameraCtrl.onChange((name) => this.setCamera(name));
-    }
+    // if (cameraNames.length) {
+    //   this.cameraFolder.domElement.style.display = "";
+    //   if (this.cameraCtrl) this.cameraCtrl.remove();
+    //   const cameraOptions = [DEFAULT_CAMERA].concat(cameraNames);
+    //   this.cameraCtrl = this.cameraFolder.add(
+    //     this.state,
+    //     "camera",
+    //     cameraOptions
+    //   );
+    //   this.cameraCtrl.onChange((name) => this.setCamera(name));
+    // }
+    console.log("morphMeshes");
+    console.log(morphMeshes);
 
     if (morphMeshes.length) {
       this.morphFolder.domElement.style.display = "";
       morphMeshes.forEach((mesh) => {
-        if (mesh.morphTargetInfluences.length) {
-          const nameCtrl = this.morphFolder.add(
-            { name: mesh.name || "Untitled" },
-            "name"
-          );
-          this.morphCtrls.push(nameCtrl);
-        }
-        for (let i = 0; i < mesh.morphTargetInfluences.length; i++) {
-          const ctrl = this.morphFolder
-            .add(mesh.morphTargetInfluences, i, 0, 1, 0.01)
-            .listen();
-          Object.keys(mesh.morphTargetDictionary).forEach((key) => {
-            if (key && mesh.morphTargetDictionary[key] === i) ctrl.name(key);
-          });
-          this.morphCtrls.push(ctrl);
+        // if (mesh.morphTargetInfluences.length) {
+        //   const nameCtrl = this.morphFolder.add(
+        //     { name: mesh.name || "Untitled" },
+        //     "name"
+        //   );
+        //   this.morphCtrls.push(nameCtrl);
+        // }
+        const folderName = mesh.name || "Untitled";
+        this.newMorphFolder = this.gui.addFolder(folderName);
+
+        if (mesh.morphTargetInfluences) {
+          for (let i = 0; i < mesh.morphTargetInfluences.length; i++) {
+            const ctrl = this.newMorphFolder
+              .add(mesh.morphTargetInfluences, i, 0, 1, 0.01)
+              .listen();
+            Object.keys(mesh.morphTargetDictionary).forEach((key) => {
+              if (key && mesh.morphTargetDictionary[key] === i) {
+                ctrl.name(key);
+              }
+            });
+          }
         }
       });
-    }
 
-    if (this.clips.length) {
-      this.animFolder.domElement.style.display = "";
-      const actionStates = (this.state.actionStates = {});
-      this.clips.forEach((clip, clipIndex) => {
-        clip.name = `${clipIndex + 1}. ${clip.name}`;
-
-        // Autoplay the first clip.
-        let action;
-        if (clipIndex === 0) {
-          actionStates[clip.name] = true;
-          action = this.mixer.clipAction(clip);
-          action.play();
-        } else {
-          actionStates[clip.name] = false;
-        }
-
-        // Play other clips when enabled.
-        const ctrl = this.animFolder.add(actionStates, clip.name).listen();
-        ctrl.onChange((playAnimation) => {
-          action = action || this.mixer.clipAction(clip);
-          action.setEffectiveTimeScale(1);
-          playAnimation ? action.play() : action.stop();
+      if (bones.length) {
+        bones.forEach((bone) => {
+          this.newBone = this.gui.addFolder(bone.name);
+          console.log("Bone");
+          console.log(bone);
+          this.newBone.add(bone.rotation, 'x', -1, 1, 0.01);
+          this.newBone.add(bone.rotation, 'y', -1, 1, 0.01);
+          this.newBone.add(bone.rotation, 'z', -1, 1, 0.01);
         });
-        this.animCtrls.push(ctrl);
-      });
+      }
     }
+
+    // if (this.clips.length) {
+    //   this.animFolder.domElement.style.display = "";
+    //   const actionStates = (this.state.actionStates = {});
+    //   this.clips.forEach((clip, clipIndex) => {
+    //     clip.name = `${clipIndex + 1}. ${clip.name}`;
+
+    //     // Autoplay the first clip.
+    //     let action;
+    //     if (clipIndex === 0) {
+    //       actionStates[clip.name] = true;
+    //       action = this.mixer.clipAction(clip);
+    //       action.play();
+    //     } else {
+    //       actionStates[clip.name] = false;
+    //     }
+
+    //     // Play other clips when enabled.
+    //     const ctrl = this.animFolder.add(actionStates, clip.name).listen();
+    //     ctrl.onChange((playAnimation) => {
+    //       action = action || this.mixer.clipAction(clip);
+    //       action.setEffectiveTimeScale(1);
+    //       playAnimation ? action.play() : action.stop();
+    //     });
+    //     this.animCtrls.push(ctrl);
+    //   });
+    // }
   }
 
   clear() {

@@ -72,10 +72,10 @@ class App {
       })
       .then((gltf) => {
         const Object3D = gltf.scene.children[0];
-        console.log("gltf.scene.children[0] ", gltf.scene.children[0]);
+        // console.log("gltf.scene.children[0] ", gltf.scene.children[0]);
 
         const Bone =Object3D.children[0]
-        console.log("gltf", Object3D.children[0]);
+        // console.log("gltf", Object3D.children[0]);
       });
   }
 
