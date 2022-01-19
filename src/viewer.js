@@ -149,7 +149,6 @@ export class Viewer {
     this.cameraFolder = null;
     this.animFolder = null;
     this.animCtrls = [];
-    this.morphFolder = null;
     this.morphCtrls = [];
     this.skeletonHelpers = [];
     this.gridHelper = null;
@@ -582,22 +581,27 @@ export class Viewer {
     // });
     // this.animFolder.add({ playAll: () => this.playAllClips() }, "playAll");
     // Morph target controls.
-    this.morphFolder = gui.addFolder("Morph Targets2");
 
     // Camera controls.
     this.cameraFolder2 = gui.addFolder("Cameras");
     this.cameraFolder2
       .add(this.defaultCamera.position, "x", -50, 50)
       .step(0.5)
-      .listen();
+      .onChange((value) => {
+        this.defaultCamera.position.x = value;
+      });
     this.cameraFolder2
       .add(this.defaultCamera.position, "y", -50, 50)
       .step(0.5)
-      .listen();
+      .onChange((value) => {
+        this.defaultCamera.position.y = value;
+      });
     this.cameraFolder2
       .add(this.defaultCamera.position, "z", -100, 100)
       .step(0.5)
-      .listen();
+      .onChange((value) => {
+        this.defaultCamera.position.z = value;
+      });
 
     // // Stats.
     // const perfFolder = gui.addFolder("Performance");
@@ -643,28 +647,24 @@ export class Viewer {
       // }
     });
 
-    // if (cameraNames.length) {
-    //   this.cameraFolder.domElement.style.display = "";
-    //   if (this.cameraCtrl) this.cameraCtrl.remove();
-    //   const cameraOptions = [DEFAULT_CAMERA].concat(cameraNames);
-    //   this.cameraCtrl = this.cameraFolder.add(
-    //     this.state,
-    //     "camera",
-    //     cameraOptions
-    //   );
-    //   this.cameraCtrl.onChange((name) => this.setCamera(name));
-    // }
+    if (cameraNames.length) {
+      this.cameraFolder.domElement.style.display = "";
+      if (this.cameraCtrl) this.cameraCtrl.remove();
+      const cameraOptions = [DEFAULT_CAMERA].concat(cameraNames);
+      this.cameraCtrl = this.cameraFolder.add(
+        this.state,
+        "camera",
+        cameraOptions
+      );
+      this.cameraCtrl.onChange((name) => this.setCamera(name));
+    }
     console.log("morphMeshes");
     console.log(morphMeshes);
 
     if (morphMeshes.length) {
-      this.morphFolder.domElement.style.display = "";
       morphMeshes.forEach((mesh) => {
         // if (mesh.morphTargetInfluences.length) {
-        //   const nameCtrl = this.morphFolder.add(
-        //     { name: mesh.name || "Untitled" },
-        //     "name"
-        //   );
+        //   
         //   this.morphCtrls.push(nameCtrl);
         // }
         const folderName = mesh.name || "Untitled";

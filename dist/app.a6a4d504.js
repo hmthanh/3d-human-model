@@ -45199,7 +45199,6 @@ var Viewer = /*#__PURE__*/function () {
     this.cameraFolder = null;
     this.animFolder = null;
     this.animCtrls = [];
-    this.morphFolder = null;
     this.morphCtrls = [];
     this.skeletonHelpers = [];
     this.gridHelper = null;
@@ -45633,13 +45632,18 @@ var Viewer = /*#__PURE__*/function () {
       // });
       // this.animFolder.add({ playAll: () => this.playAllClips() }, "playAll");
       // Morph target controls.
-
-      this.morphFolder = gui.addFolder("Morph Targets2"); // Camera controls.
+      // Camera controls.
 
       this.cameraFolder2 = gui.addFolder("Cameras");
-      this.cameraFolder2.add(this.defaultCamera.position, "x", -50, 50).step(0.5).listen();
-      this.cameraFolder2.add(this.defaultCamera.position, "y", -50, 50).step(0.5).listen();
-      this.cameraFolder2.add(this.defaultCamera.position, "z", -100, 100).step(0.5).listen(); // // Stats.
+      this.cameraFolder2.add(this.defaultCamera.position, "x", -50, 50).step(0.5).onChange(function (value) {
+        _this9.defaultCamera.position.x = value;
+      });
+      this.cameraFolder2.add(this.defaultCamera.position, "y", -50, 50).step(0.5).onChange(function (value) {
+        _this9.defaultCamera.position.y = value;
+      });
+      this.cameraFolder2.add(this.defaultCamera.position, "z", -100, 100).step(0.5).onChange(function (value) {
+        _this9.defaultCamera.position.z = value;
+      }); // // Stats.
       // const perfFolder = gui.addFolder("Performance");
       // const perfLi = document.createElement("li");
       // this.stats.dom.style.position = "static";
@@ -45687,29 +45691,25 @@ var Viewer = /*#__PURE__*/function () {
         //   cameraNames.push(node.name);
         // }
 
-      }); // if (cameraNames.length) {
-      //   this.cameraFolder.domElement.style.display = "";
-      //   if (this.cameraCtrl) this.cameraCtrl.remove();
-      //   const cameraOptions = [DEFAULT_CAMERA].concat(cameraNames);
-      //   this.cameraCtrl = this.cameraFolder.add(
-      //     this.state,
-      //     "camera",
-      //     cameraOptions
-      //   );
-      //   this.cameraCtrl.onChange((name) => this.setCamera(name));
-      // }
+      });
+
+      if (cameraNames.length) {
+        this.cameraFolder.domElement.style.display = "";
+        if (this.cameraCtrl) this.cameraCtrl.remove();
+        var cameraOptions = [DEFAULT_CAMERA].concat(cameraNames);
+        this.cameraCtrl = this.cameraFolder.add(this.state, "camera", cameraOptions);
+        this.cameraCtrl.onChange(function (name) {
+          return _this10.setCamera(name);
+        });
+      }
 
       console.log("morphMeshes");
       console.log(morphMeshes);
 
       if (morphMeshes.length) {
-        this.morphFolder.domElement.style.display = "";
         morphMeshes.forEach(function (mesh) {
           // if (mesh.morphTargetInfluences.length) {
-          //   const nameCtrl = this.morphFolder.add(
-          //     { name: mesh.name || "Untitled" },
-          //     "name"
-          //   );
+          //   
           //   this.morphCtrls.push(nameCtrl);
           // }
           var folderName = mesh.name || "Untitled";
